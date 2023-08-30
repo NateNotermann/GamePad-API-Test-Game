@@ -15,7 +15,13 @@ let rightPressed = false;
 let upPressed = false;
 let downPressed = false;
 
+let bluePressed = false;
+let yellowPressed = false;
+let redPressed = false;
+let greenPressed = false;
+
 let connected = false
+let gameLoopCheck = false
 
 function setUpCanvas(){ // sets default player attributes
     canvas.width = window.innerWidth;       // Example Width 1000px
@@ -55,6 +61,8 @@ function checkPlayerAttributes (){
     console.log('player W/H: ', playerWidthAndHeight, "x", playerWidthAndHeight);
     console.log('playerX: ', playerX, ". ", "playerY: ", playerY);
     console.log('gamepad Connected Status: ', connected);
+    console.log('playerColor:', playerColor);
+    if (gameLoopCheck) { console.log('gameLoop running');}
     // console.log(gamepad.controllerIndex);
     // console.log(gamepad.buttons);
 }
@@ -68,23 +76,28 @@ function controllerInput() {
         leftPressed = buttons[14].pressed;
         rightPressed = buttons[15].pressed;
 
-        const stickDeadZone = 0.4;
+        const stickDeadZone = 0.4;              // change to 0.8 to only allow movement in one direction at a time.
         const leftRightValue = gamepad.axes[0];
         const upDownValue = gamepad.axes[1];
 
-        if(leftRightValue >= stickDeadZone) {
+        if(leftRightValue >= stickDeadZone) {   // if gamepad left/right axes is >= than deadZone, move right
             rightPressed = true;
         } 
-        else if (leftRightValue <= -stickDeadZone) {
+        else if (leftRightValue <= -stickDeadZone) {    // if gamepad left/right axes is <= than deadZone, move left
             leftPressed = true;
         }
 
         if(upDownValue >= stickDeadZone) { // if gamepad up/down axes is >= than deadZone, move up
-            upPressed = true;
+            downPressed = true;
         } 
         else if (upDownValue <= -stickDeadZone) { // if gamepad up/down axes is <= than deadZone, move down
-            downPressed = true;
+            upPressed = true;
         }
+
+        greenPressed = buttons[0].pressed;
+        redPressed = buttons[1].pressed;
+        bluePressed = buttons[2].pressed;
+        yellowPressed = buttons[3].pressed;
 
     }
 };
@@ -104,17 +117,94 @@ function movePlayer() {
     }
 }
 
+function changePlayerColor(buttonPressed) {
+switch (buttonPressed) {
+    case "green":
+        playerColor = "green";
+        break;
+    case "yellow":
+        playerColor = "yellow";
+        break;
+    case "blue":
+        playerColor = "blue";
+        break;
+    case "red":
+        playerColor = "red";
+        break;
+    default:
+        playerColor = "orange";
+        break;
+}
+// console.log('change player color');
+// console.log("buttonPressed: " + buttonPressed);
+// console.log("playerColor: " + playerColor);
+
+    // if(bluePressed) {
+    //     // playerColor = "blue"
+    // } 
+    // if(redPressed) {
+    //     playerColor = "yellow"
+    // } 
+    // if(yellowPressed) {
+    //     playerColor = "red"
+    // } 
+    // if(greenPressed) {
+    //     playerColor = "green"
+    // } 
+    // if(!bluePressed && !redPressed && !yellowPressed && !greenPressed) {
+    //     playerColor = "orange"
+    // }
+    // if(greenPressed) {      // green[0], yellow[1], blue[2], red[3]
+    //     playerColor = "green"
+    // } else if (redPressed) {
+    //     playerColor = "red"
+    // } else if (bluePressed) {
+    //     playerColor = "blue"
+    // } else if (yellowPressed) {
+    //     playerColor = "yellow"
+    // } else {
+    //     playerColor = "orange"
+    // }
+    // console.log("Green:" + greenPressed, " red:" + redPressed, " Blue:" + bluePressed, " Yellow:" + yellowPressed, "buttonPressed: " + buttonPressed, "playerColor: " + playerColor);
+}
+
+function checkButtonPressed() {     // green[0], red[1], blue[2], yellow[3]
+    if (controllerIndex !== null ){
+
+    
+        const gamepad = navigator.getGamepads()[controllerIndex]
+        const buttons = gamepad.buttons;
+
+        if(greenPressed) {              // [0]
+            changePlayerColor("green")  // green
+        } 
+        if(buttons[1].pressed) {        // [1]
+            changePlayerColor("red")    // red
+            // playerColor = "red"         
+        } 
+        if(buttons[2].pressed) {        // [2]
+            changePlayerColor("blue")   // blue
+            // playerColor = "blue"        
+        } 
+        if(buttons[3].pressed) {        // [3]
+            changePlayerColor("yellow") // yellow
+            // playerColor = "yellow"      
+        }
+    }
+}
+
 function updatePlayer() {
     movePlayer();
-    //changePlayerColor();
+    changePlayerColor();
 }
 
 function gameLoop() { 
-    // console.log('gameLoop');
+    gameLoopCheck = true;
     clearScreen();  // clears the screen. Sets dark grey screen
     drawPlayer();   
     controllerInput();
     updatePlayer();
+    checkButtonPressed();
     requestAnimationFrame(gameLoop); // recursion
     // checkPlayerAttributes();     // Checks/Console logs gamepad attributes
 }
