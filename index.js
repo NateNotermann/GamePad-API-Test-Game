@@ -67,7 +67,8 @@ function checkPlayerAttributes (){
     // console.log(gamepad.buttons);
 }
 
-function controllerInput() {
+// -------- BASIC CONTROLLER INPUT TEMPLATE FUNCTION -------- //
+function controllerInput() {  
     if(controllerIndex !== null) {
         const gamepad = navigator.getGamepads()[controllerIndex]
         const buttons = gamepad.buttons;
@@ -101,7 +102,8 @@ function controllerInput() {
 
     }
 };
-    
+
+// -------- BASIC FUNCTION TO MOVE PLAYER -------- //
 function movePlayer() {
     if(upPressed) {
         playerY -= velocity;
@@ -116,7 +118,7 @@ function movePlayer() {
         playerX += velocity;
     }
 }
-
+// -------- ONLY CHANGES C.RECT COLOR -------- //
 function changePlayerColor(buttonPressed) {
 switch (buttonPressed) {
     case "green":
@@ -168,6 +170,7 @@ switch (buttonPressed) {
     // console.log("Green:" + greenPressed, " red:" + redPressed, " Blue:" + bluePressed, " Yellow:" + yellowPressed, "buttonPressed: " + buttonPressed, "playerColor: " + playerColor);
 }
 
+// ------ All this does is sperate the controller input console logs into a separate function to turn on an off 
 function checkButtonPressed() {     // green[0], red[1], blue[2], yellow[3]
     if (controllerIndex !== null ){
 
